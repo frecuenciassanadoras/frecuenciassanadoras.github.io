@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación Interactiva - Ritual de 21 Días</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Placeholder Comments -->
+    <!-- Chosen Palette: Verde Esmeralda y Oscuridad Mística -->
+    <!-- Application Structure Plan: La aplicación está diseñada para guiar al usuario desde la identificación de un "dolor" hasta la comprensión de la solución personalizada. Comienza con un Héroe visual, seguido de un explorador interactivo de necesidades. Al seleccionar una necesidad, se revela una recomendación de frecuencia específica. Luego, una sección visual explica el proceso de 21 días, apoyada por un gráfico de Chart.js que visualiza la "elevación vibracional". Finalmente, se presenta un claro llamado a la acción. Esta estructura no lineal fomenta la exploración y personaliza la experiencia, aumentando el valor percibido del producto. -->
+    <!-- Visualization & Content Choices: 1. Explorador de Necesidades (Botones HTML/JS): Meta: Involucrar. El usuario selecciona un "dolor", y JS muestra la solución. Justificación: La interactividad crea un sentido de agencia y personalización. 2. Recomendación Dinámica (Bloque HTML/JS): Meta: Informar/Persuadir. Muestra la frecuencia específica para el dolor seleccionado. Justificación: Conecta directamente el problema del usuario con la solución del producto. 3. Proceso de 21 Días (Timeline HTML/CSS): Meta: Organizar/Explicar. Visualiza las etapas de la transformación. Justificación: Simplifica un concepto abstracto y gestiona las expectativas del usuario. 4. Gráfico de Elevación Vibracional (Chart.js Line Chart): Meta: Visualizar Cambio. Muestra un progreso cuantificable. Justificación: Proporciona una prueba "visual" del beneficio, reforzando la credibilidad. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+        }
+        .hero-bg {
+            background-image: url('https://res.cloudinary.com/df3hfnqhm/image/upload/v1752305344/Dise%C3%B1o_sin_t%C3%ADtulo_-_2025-07-12T022829.102_goedaz.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(2px);
+        }
+        .content-section {
+            position: relative;
+            z-index: 1;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="text-gray-300">
+
+    <!-- Hero Section -->
+    <header class="hero-bg relative text-white text-center py-20 px-6">
+        <div class="content-section">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-emerald-300">Descubre tu Frecuencia Sanadora</h1>
+            <p class="text-lg md:text-xl max-w-2xl mx-auto">Tu transformación comienza con el <span class="font-semibold text-white">Ritual de 21 Días</span>. Identifica qué necesitas liberar y te mostraremos el camino.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6 md:p-10">
+        <!-- Interactive Pain Point Explorer -->
+        <section id="explorer" class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-2 text-white">¿Qué dolor o deseo resuena contigo hoy?</h2>
+            <p class="mb-8 text-gray-400">Selecciona una opción para descubrir tu frecuencia recomendada.</p>
+            <div id="pain-buttons" class="flex flex-wrap justify-center gap-4">
+                <button data-pain="love" class="px-6 py-3 bg-gray-700 hover:bg-emerald-600 rounded-lg font-semibold transition-colors duration-300">Necesito sanar y atraer amor ❤️</button>
+                <button data-pain="fear" class="px-6 py-3 bg-gray-700 hover:bg-emerald-600 rounded-lg font-semibold transition-colors duration-300">Siento miedo y culpa que me bloquean 🛡️</button>
+                <button data-pain="abundance" class="px-6 py-3 bg-gray-700 hover:bg-emerald-600 rounded-lg font-semibold transition-colors duration-300">Quiero atraer más abundancia 💸</button>
+                <button data-pain="clarity" class="px-6 py-3 bg-gray-700 hover:bg-emerald-600 rounded-lg font-semibold transition-colors duration-300">Mi mente está nublada, busco claridad 🧹</button>
+                <button data-pain="spirit" class="px-6 py-3 bg-gray-700 hover:bg-emerald-600 rounded-lg font-semibold transition-colors duration-300">Deseo una conexión espiritual profunda ✨</button>
+            </div>
+        </section>
+
+        <!-- Dynamic Frequency Recommendation -->
+        <section id="recommendation" class="hidden bg-gray-800 rounded-lg p-8 mb-16 transition-all duration-500 max-w-3xl mx-auto shadow-2xl">
+            <h3 id="rec-title" class="text-2xl font-bold text-center text-emerald-300 mb-4"></h3>
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <img id="rec-image" src="" alt="Frecuencia Recomendada" class="w-40 h-40 rounded-full object-cover border-4 border-emerald-500">
+                <div class="text-center md:text-left">
+                    <p id="rec-purpose" class="text-lg mb-2"></p>
+                    <p id="rec-description" class="text-gray-400"></p>
+                </div>
+            </div>
+            <div class="text-center mt-6">
+                <a href="https://pay.hotmart.com/M100825732V?checkoutMode=10" target="_blank" class="inline-block px-8 py-3 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition-colors">¡Quiero mi Ritual de 21 Días!</a>
+            </div>
+        </section>
+
+        <!-- "Why 21 Days?" Section -->
+        <section class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-white">El Viaje de 21 Días hacia tu Nueva Realidad</h2>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-emerald-400">Días 1-7: La Liberación 🔄</h3>
+                    <p class="text-gray-400">Rompes ciclos energéticos y liberas patrones antiguos. Puedes sentir emociones removidas o cansancio mientras tu cuerpo se ajusta.</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-emerald-400">Días 8-14: La Reconfiguración 🧠</h3>
+                    <p class="text-gray-400">Comienzas a sentir más claridad y ligereza. Tu sistema nervioso se reprograma y abres espacio a nuevas perspectivas y paz interior.</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-emerald-400">Días 15-21: La Alineación 🌟</h3>
+                    <p class="text-gray-400">Integras una nueva vibración base. Tu energía responde de forma diferente, alineándote con lo que deseas manifestar con mayor coherencia.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Energetic Shift Chart -->
+        <section class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-white">Visualiza tu Elevación Vibracional</h2>
+            <div class="bg-gray-800 p-4 md:p-8 rounded-lg">
+                <div class="chart-container">
+                    <canvas id="energeticShiftChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Call to Action Section -->
+        <section class="text-center bg-gray-800 rounded-lg p-10">
+            <h2 class="text-3xl font-bold mb-4 text-emerald-300">¿Cuánto vale tu bienestar?</h2>
+            <p class="text-lg max-w-2xl mx-auto mb-6">Este no es solo un producto; es una inversión en tu evolución, tu paz mental y tu capacidad de manifestar la vida que realmente deseas.</p>
+            <a href="https://pay.hotmart.com/M100825732V?checkoutMode=10" target="_blank" class="inline-block px-12 py-4 bg-emerald-600 text-white text-xl font-bold rounded-lg hover:bg-emerald-700 transition-colors shadow-lg">Comienza tu Transformación Ahora</a>
+            <p class="mt-6 text-gray-400">¿Tienes preguntas? <a href="https://wa.link/naypoe" target="_blank" class="text-emerald-400 hover:underline">Contáctanos por WhatsApp</a></p>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const frequencyData = {
+                love: {
+                    hz: 528,
+                    purpose: 'Sanación profunda y amor incondicional',
+                    description: 'Esta frecuencia te ayuda a reparar tu campo energético, abrir el corazón y atraer relaciones más armoniosas y amorosas a tu vida.',
+                    image: 'https://res.cloudinary.com/df3hfnqhm/image/upload/v1752305502/Dise%C3%B1o_sin_t%C3%ADtulo_-_2025-07-12T023106.216_blsoj9.png'
+                },
+                fear: {
+                    hz: 396,
+                    purpose: 'Liberación de miedo y culpa',
+                    description: 'Actúa como una llave para soltar los bloqueos energéticos causados por el miedo y la culpa, permitiéndote avanzar con seguridad y confianza.',
+                    image: 'https://res.cloudinary.com/df3hfnqhm/image/upload/v1752305206/Dise%C3%B1o_sin_t%C3%ADtulo_-_2025-07-12T022608.123_phbce7.png'
+                },
+                abundance: {
+                    hz: 888,
+                    purpose: 'Apertura al flujo de la abundancia y prosperidad',
+                    description: 'Sintoniza tu energía con la vibración de la prosperidad, ayudándote a eliminar creencias limitantes sobre el dinero y a recibir el flujo de la abundancia.',
+                    image: 'https://res.cloudinary.com/df3hfnqhm/image/upload/v1752306392/Dise%C3%B1o_sin_t%C3%ADtulo_-_2025-07-12T024556.823_u78vsn.png'
+                },
+                clarity: {
+                    hz: 741,
+                    purpose: 'Limpieza mental y expresión creativa',
+                    description: 'Despeja la niebla mental, desintoxica tu campo energético de negatividad y despierta tu capacidad para expresarte de forma auténtica y creativa.',
+                    image: 'https://res.cloudinary.com/df3hfnqhm/image/upload/v1752305838/Dise%C3%B1o_sin_t%C3%ADtulo_-_2025-07-12T023646.753_xcxmuh.png'
+                },
+                spirit: {
+                    hz: 963,
+                    purpose: 'Conexión espiritual y conciencia divina',
+                    description: 'Conocida como la "Frecuencia de Dios", te ayuda a conectar con tu yo superior, la fuente universal y a despertar una conciencia más elevada.',
+                    image: 'https://res.cloudinary.com/df3hfnqhm/image/upload/v1752564892/Dise%C3%B1o_sin_t%C3%ADtulo_-_2025-07-15T023321.135_e4dpxi.png'
+                }
+            };
+
+            const painButtonsContainer = document.getElementById('pain-buttons');
+            const recommendationSection = document.getElementById('recommendation');
+            
+            painButtonsContainer.addEventListener('click', function(event) {
+                if (event.target.tagName === 'BUTTON') {
+                    const pain = event.target.dataset.pain;
+                    const data = frequencyData[pain];
+                    
+                    document.getElementById('rec-title').textContent = `Tu Frecuencia Recomendada: ${data.hz} Hz`;
+                    document.getElementById('rec-image').src = data.image;
+                    document.getElementById('rec-purpose').textContent = data.purpose;
+                    document.getElementById('rec-description').textContent = data.description;
+                    
+                    recommendationSection.classList.remove('hidden');
+                    recommendationSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+
+            const ctx = document.getElementById('energeticShiftChart').getContext('2d');
+            const energeticShiftChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Día 1', 'Día 7', 'Día 14', 'Día 21'],
+                    datasets: [{
+                        label: 'Nivel Vibracional',
+                        data: [20, 45, 75, 100],
+                        backgroundColor: 'rgba(110, 231, 183, 0.2)',
+                        borderColor: 'rgba(52, 211, 153, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: 'rgba(52, 211, 153, 1)',
+                        pointHoverRadius: 7,
+                        pointHoverBackgroundColor: 'rgba(52, 211, 153, 1)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                             grid: {
+                                color: '#374151'
+                            }
+                        },
+                        x: {
+                           ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
